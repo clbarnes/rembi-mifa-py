@@ -1,0 +1,149 @@
+from __future__ import annotations
+from enum import StrEnum, auto
+from typing import Annotated
+import datetime as dt
+from pydantic import BaseModel, EmailStr, Field, model_serializer
+
+from ..util import IntAsStr, OmitIfFalsey
+
+__all__ = [
+    "MifaContainer",
+    "Publications",
+    "Author",
+    "OrganisationInfo",
+    "GrantReference",
+    "LicenseType",
+    "Annotations",
+    "AnnotationType",
+    "FileLevelMetadata",
+]
+
+
+class MifaContainer(BaseModel):
+    publications: Publications | None = None
+    authors: Annotated[list[Author], OmitIfFalsey] = Field(default_factory=list)
+    grants: Annotated[list[GrantReference], OmitIfFalsey] = Field(default_factory=list)
+    link_url: Annotated[list[str], OmitIfFalsey] = Field(default_factory=list)
+    link_description: Annotated[list[str], OmitIfFalsey] = Field(default_factory=list)
+    title: str
+    description: str
+    keywords: Annotated[list[str], OmitIfFalsey] = Field(default_factory=list)
+    license: LicenseType
+    ai_models_trained: Annotated[list[str], OmitIfFalsey] = Field(default_factory=list)
+    acknowledgements: str | None = None
+    funding_statement: str
+    annotations: list[Annotations]
+
+
+class Publications(BaseModel):
+    """Information about any publications associated with the dataset"""
+
+    publication_title: str
+    publication_authors: str
+    publication_doi: str
+    publication_year: Annotated[int, IntAsStr] | None = None
+    pubmed_id: str | None = None
+
+    @model_serializer
+    def _serialize(self):
+        return {
+            k: (str(v) if k == "publication_year" and v is not None else v)
+            for k, v in self
+        }
+
+
+class Author(BaseModel):
+    """Information about the authors."""
+
+    organisation: Annotated[list[OrganisationInfo], OmitIfFalsey] = Field(
+        default_factory=list
+    )
+    author_first_name: str
+    author_last_name: str
+    email: EmailStr | None = None
+    orcid_id: str | None = None
+    role: Annotated[list[str], OmitIfFalsey] = Field(default_factory=list)
+
+
+class OrganisationInfo(BaseModel):
+    """Information about the organisation the author is affiliated with."""
+
+    organisation_name: str
+    address: str | None = None
+    ror_id: str | None = None
+
+
+class GrantReference(BaseModel):
+    grant_id: str
+    funder: str
+
+
+class LicenseType(StrEnum):
+    CC0 = "CC0"
+    """No Copyright. You can copy, modify, distribute and perform the work, even for commercial purposes, all without asking permission."""
+
+    CC_BY = "CC_BY"
+    """You are free to: Share — copy and redistribute the material in any medium or format. Adapt — remix, transform, and build upon the material for any purpose, even commercially. You must give appropriate credit, provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use."""
+
+
+class Annotations(BaseModel):
+    """A set of annotations for an AI-ready dataset."""
+
+    authors: Annotated[list[Author], OmitIfFalsey] = Field(default_factory=list)
+    file_metadata: Annotated[list[FileLevelMetadata], OmitIfFalsey] = Field(
+        default_factory=list
+    )
+    annotation_overview: str
+    annotation_type: Annotated[list[AnnotationType], OmitIfFalsey] = Field(
+        default_factory=list
+    )
+    annotation_method: str
+    annotation_criteria: str | None = None
+    annotation_coverage: str | None = None
+    annotation_confidence_level: str | None = None
+
+
+class FileLevelMetadata(BaseModel):
+    annotation_id: str
+    annotation_type: Annotated[list[AnnotationType], OmitIfFalsey] = Field(
+        default_factory=list
+    )
+    source_image_id: str
+    transformations: str | None = None
+    spatial_information: str | None = None
+    annotation_creation_time: dt.datetime | None = None
+
+
+class AnnotationType(StrEnum):
+    CLASS_LABELS = auto()
+    """tags that identify specific features, patterns or classes in images"""
+
+    BOUNDING_BOXES = auto()
+    """rectangles completely enclosing a structure of interest within an image"""
+
+    COUNTS = auto()
+    """number of objects, such as cells, found in an image"""
+
+    DERIVED_ANNOTATIONS = auto()
+    """additional analytical data extracted from the images. For example, the image point spread function,the signal to noise ratio, focus information..."""
+
+    GEOMETRICAL_ANNOTATIONS = auto()
+    """polygons and shapes that outline a region of interest in the image. These can be geometrical primitives, 2D polygons, 3D meshes"""
+
+    GRAPHS = auto()
+    """graphical representations of the morphology, connectivity, or spatial arrangement of biological structures in an image. Graphs, such as skeletons or connectivity diagrams, typically consist of nodes and edges, where nodes represent individual elements or regions and edges represent the connections or interactions between them"""
+
+    POINT_ANNOTATIONS = auto()
+    """X, Y, and Z coordinates of a point of interest in an image (for example an object's centroid or landmarks"""
+
+    SEGMENTATION_MASK = auto()
+    """an image, the same size as the source image, with the value of each pixel representing some biological identity or background region"""
+
+    TRACKS = auto()
+    """annotations marking the movement or trajectory of objects within a sequence of bioimages"""
+
+    WEAK_ANNOTATIONS = auto()
+    """rough imprecise annotations that are fast to generate. These annotations are used, for example, to detect an object without providing accurate boundaries"""
+
+    OTHER = auto()
+    """other types of annotations, please specify in the annotation overview section"""

@@ -1,0 +1,27 @@
+[project]
+name = "rembi-mifa"
+version = "0.1.0"
+description = "Models for REMBI and MIFA metadata specifications for FAIR bioimaging data."
+readme = "README.md"
+authors = [{ name = "Chris Barnes", email = "chris.barnes@gerbi-gmb.de" }]
+requires-python = ">=3.10"
+dependencies = ["email-validator>=2.3.0", "pydantic>=2.12.4"]
+
+[build-system]
+requires = ["uv_build>=0.9.8,<0.10.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+docs = [
+    "mkdocs>=1.6.1",
+    "mkdocs-material>=9.7.0",
+    "mkdocstrings[python]>=0.30.1",
+]
+lint = ["mypy>=1.18.2", "ruff>=0.14.5"]
+test = ["pytest>=9.0.1"]
+dev = [
+    "prek>=0.2.17",
+    { include-group = "docs" },
+    { include-group = "lint" },
+    { include-group = "test" },
+]

@@ -1,0 +1,18 @@
+site_name: rembi-mifa
+theme: material
+nav:
+  - index.md
+  - api_reference.md
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            show_if_no_docstring: true
+            find_stubs_package: true
+            preload_modules:
+              - rembi_mifa
+          paths:
+            - src
+      default_handler: python
