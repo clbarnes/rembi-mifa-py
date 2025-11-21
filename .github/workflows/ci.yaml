@@ -42,3 +42,19 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - run: uv sync
       - run: uv run pytest
+
+  publish:
+    runs-on: ubuntu-latest
+    if: startsWith(github.event.ref, 'refs/tags/v')
+    needs: [format, lint, test]
+    environment:
+      name: pypi
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v6
+      - uses: astral-sh/setup-uv@v6
+      - run: uv python install 3.10
+      - run: uv build
+      - run: uv publish

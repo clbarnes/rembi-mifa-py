@@ -23,3 +23,20 @@ This implementation is opinionated on certain serialisation/deserialisation feat
 - [ORCiD IDs](https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier) may be parsed as only the identifier, but are normalised to URLs; the checksum is also validated
 - in a few cases, the specification requires a list but does not state that the list must be non-empty, so this is not validated
 - the `keywords` field of `rembi.Study` is probably supposed to represent a delimited list, but it's not specified, so it's left as a plain string here
+
+## Contributing
+
+Use the justfile for most common development tasks.
+
+Releases should be published from CI.
+`just bump minor` will
+
+- run various tests
+- check that your working tree is clean
+- check you are on the `main` branch
+- bump the **minor** project version
+- commit that change
+- tag that commit
+- push the changes and tag
+
+Then CI will deploy to PyPI.

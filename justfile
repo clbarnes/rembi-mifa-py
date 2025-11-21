@@ -16,10 +16,15 @@ format-check:
 test:
     uv run pytest
 
-bump BUMP: lint format-check test types
+prek:
+    uv run prek run
+
+bump BUMP: lint format-check test types prek
     uv sync
+    test "$(git rev-parse --abbrev-ref HEAD)" = main
     test -z "$(git status --porcelain)"
     uv version --bump {{ BUMP }}
     git add -u
     git commit -m "Bump to v$(uv version | cut -d " " -f 2)"
     git tag -a "v$(uv version | cut -d " " -f 2)" -m "Version $(uv version | cut -d " " -f 2)"
+    git push --follow-tags
