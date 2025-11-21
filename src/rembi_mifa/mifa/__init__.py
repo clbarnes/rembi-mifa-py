@@ -7,7 +7,14 @@ More details can be found on the website:
 """
 
 from __future__ import annotations
-from enum import StrEnum, auto
+import sys
+
+if sys.version_info < (3, 11):
+    from enum import auto
+    from backports.strenum import StrEnum
+else:
+    from enum import StrEnum, auto
+from enum import auto
 import datetime as dt
 from pydantic import EmailStr, Field, model_serializer, BaseModel
 
