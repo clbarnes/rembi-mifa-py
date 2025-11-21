@@ -20,7 +20,7 @@ jobs:
         with:
           enable-cache: true
       - run: uv sync
-      - run: uv run ruff --check
+      - run: uv run ruff check
       - run: uv run mypy .
 
   test:
