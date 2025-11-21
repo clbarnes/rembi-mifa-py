@@ -1,3 +1,13 @@
+"""
+Implements REMBI metadata specified here:
+- https://www.ebi.ac.uk/bioimage-archive/rembi-model-reference/
+
+More details can be found on the EBI BioImage Archive website:
+- https://www.ebi.ac.uk/bioimage-archive/rembi-help-overview/
+- https://www.ebi.ac.uk/bioimage-archive/rembi-help-lab/
+- https://www.ebi.ac.uk/bioimage-archive/rembi-help-examples/
+"""
+
 from __future__ import annotations
 from pydantic import (
     BaseModel,

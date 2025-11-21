@@ -1,3 +1,11 @@
+"""
+Implements the EBI BioImageArchive MIFA metadata guildeines as specified here:
+- https://www.ebi.ac.uk/bioimage-archive/mifa-model-reference/
+
+More details can be found on the website:
+- https://www.ebi.ac.uk/bioimage-archive/mifa-overview/
+"""
+
 from __future__ import annotations
 from enum import StrEnum, auto
 from typing import Annotated
