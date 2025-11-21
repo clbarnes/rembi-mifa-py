@@ -1,3 +1,4 @@
+from pydantic import Field
 from pydantic import BaseModel
 
 
@@ -13,7 +14,9 @@ class Specimen(BaseModel):
     - Cells grown on coverslips were fixed in ice-cold methanol at _20 _ C for 10 min. After blocking in 0.2% gelatine from cold-water fish (Sigma) in PBS (PBS/FSG) for 15 min, coverslips were incubated with primary antibodies in blocking solution for 1h. Following washes with 0.2% PBS/FSG, the cells were incubated with a 1:500 dilution of secondary antibodies for 1 h (donkey anti- mouse/rabbit/goat/sheep conjugated to Alexa 488 or Alexa 594; Molecular Probes or donkey anti-mouse conjugated to DyLight 405, Jackson ImmunoResearch). The cells were counterstained with 1 _g ml_1 Hoechst 33342 (Sigma) to visualize chromatin. After washing with 0.2% PBS/FSG, the coverslips were mounted on glass slides by inverting them into mounting solution (ProLong Gold antifade, Molecular Probes). The samples were allowed to cure for 24-48 h.
     """
 
-    growth_protocol: str | None = None
+    growth_protocol: str | None = Field(
+        default_factory=lambda: None, exclude_if=lambda x: x is None
+    )
     """How the specimen was grown e.g. cell line cultures, crosses or plant growth.
 
     ## Examples

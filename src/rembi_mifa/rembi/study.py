@@ -1,23 +1,17 @@
 from __future__ import annotations
-from pydantic import (
-    BaseModel,
-    Field,
-    AnyUrl,
-    model_serializer,
-)
-from typing import Annotated, Literal
+from pydantic import Field, AnyUrl, BaseModel
+from typing import Literal
 import datetime as dt
 
 from .version import REMBI_VERSION
 
-from ..util import IntAsStr, LongStr, OmitIfFalsey, omit_falsey
 from .author import Author
 
 
 class Study(BaseModel):
     """General study information"""
 
-    title: LongStr
+    title: str = Field(min_length=25)
     """The title for your dataset.
     This will be displayed when search results including your data are shown.
     Often this will be the same as an associated publication.
@@ -28,7 +22,7 @@ class Study(BaseModel):
     - Large-scale electron microscopy database for human type 1 diabetes
     """
 
-    description: LongStr
+    description: str = Field(min_length=25)
     """Use this field to describe your dataset. This can be the abstract to an accompanying publication."""
 
     private_until_date: dt.date
@@ -44,21 +38,21 @@ class Study(BaseModel):
 
     authors: list[Author]
 
-    license: License | None = None
-
-    funding: Funding | None = None
-
-    publications: Annotated[list[Publication], OmitIfFalsey] = Field(
-        default_factory=list
+    license: License | None = Field(
+        default_factory=lambda: None, exclude_if=lambda x: x is None
     )
 
-    links: Annotated[list[Link], OmitIfFalsey] = Field(default_factory=list)
+    funding: Funding | None = Field(
+        default_factory=lambda: None, exclude_if=lambda x: x is None
+    )
 
-    rembi_version: Literal["1.5"] = REMBI_VERSION
+    publications: list[Publication] = Field(
+        default_factory=list, exclude_if=lambda x: not x
+    )
 
-    @model_serializer
-    def _serialize(self):
-        return omit_falsey(self)
+    links: list[Link] = Field(default_factory=list, exclude_if=lambda x: not x)
+
+    rembi_version: Literal["1.5"] = REMBI_VERSION  # type: ignore
 
 
 # class License(BaseModel):
@@ -71,8 +65,8 @@ class Funding(BaseModel):
     funding_statement: str
     """A description of how the data generation was funded."""
 
-    grant_references: Annotated[list[GrantReference], OmitIfFalsey] = Field(
-        default_factory=list
+    grant_references: list[GrantReference] = Field(
+        default_factory=list, exclude_if=lambda x: not x
     )
 
 
@@ -88,30 +82,40 @@ class Publication(BaseModel):
     title: str
     """Title of associated publication."""
 
-    authors: str | None = None
+    authors: str | None = Field(
+        default_factory=lambda: None, exclude_if=lambda x: x is None
+    )
     """Authors of associated publication."""
 
-    doi: str | None = None
+    doi: str | None = Field(
+        default_factory=lambda: None, exclude_if=lambda x: x is None
+    )
     """Digital Object Identifier (DOI)."""
 
-    year: IntAsStr | None = None
+    year: int | None = Field(
+        default_factory=lambda: None,
+        exclude_if=lambda x: x is None,
+        coerce_numbers_to_str=True,
+    )
     """Year of publication."""
 
-    pubmid_id: str | None = None
-
-    @model_serializer
-    def _serialize(self):
-        return {k: (str(v) if k == "year" and v is not None else v) for k, v in self}
+    pubmid_id: str | None = Field(
+        default_factory=lambda: None, exclude_if=lambda x: x is None
+    )
 
 
 class Link(BaseModel):
     link_url: AnyUrl
     """The URL of a link relevant to the dataset."""
 
-    link_type: str | None = None
+    link_type: str | None = Field(
+        default_factory=lambda: None, exclude_if=lambda x: x is None
+    )
     """The type of the link."""
 
-    link_description: str | None = None
+    link_description: str | None = Field(
+        default_factory=lambda: None, exclude_if=lambda x: x is None
+    )
     """The description of the linked content.
 
     ## Examples

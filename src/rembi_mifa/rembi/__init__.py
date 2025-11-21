@@ -9,10 +9,7 @@ More details can be found on the EBI BioImage Archive website:
 """
 
 from __future__ import annotations
-from pydantic import (
-    BaseModel,
-    AnyUrl,
-)
+from pydantic import AnyUrl, Field, BaseModel
 
 from .annotations import Annotations, FileLevelMetadata, AnnotationType
 from .author import Author, OrganisationInfo, OrganisationUrl
@@ -32,9 +29,15 @@ class RembiStudy(BaseModel):
     sample: list[Biosample]
     specimen: list[Specimen]
     image_acquisition: list[ImageAcquisition]
-    image_correlation: ImageCorrelation | None = None
-    image_analysis: ImageAnalysis | None = None
-    annotations: Annotations | None = None
+    image_correlation: ImageCorrelation | None = Field(
+        default_factory=lambda: None, exclude_if=lambda x: x is None
+    )
+    image_analysis: ImageAnalysis | None = Field(
+        default_factory=lambda: None, exclude_if=lambda x: x is None
+    )
+    annotations: Annotations | None = Field(
+        default_factory=lambda: None, exclude_if=lambda x: x is None
+    )
 
 
 __all__ = [

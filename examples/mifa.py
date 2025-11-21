@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from rembi_mifa import mifa
 
 container = mifa.MifaContainer(
@@ -12,6 +13,6 @@ container = mifa.MifaContainer(
     ],
 )
 
-as_json = container.model_dump_json(indent=2, exclude_none=True)
+as_json = container.model_dump_json(indent=2)
 print(as_json)
 v2 = mifa.MifaContainer.model_validate_json(as_json)

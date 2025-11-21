@@ -56,7 +56,7 @@ study = rembi.RembiStudy(
     ],
 )
 
-as_json = study.model_dump_json(indent=2, exclude_none=True)
+as_json = study.model_dump_json(indent=2)
 print(as_json)
 
 v2 = study.model_validate_json(as_json)

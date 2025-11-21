@@ -1,52 +1,12 @@
 import string
 from typing import Annotated
-from pydantic import AfterValidator
-from collections.abc import Iterable, Sequence
+from pydantic import AfterValidator, Field
+from collections.abc import Iterable
 import re
 
 ORCID_DIGITS_RE = re.compile(
     r"^(https?://orcid.org/)?(\d\d\d\d[-\s]?\d\d\d\d[-\s]?\d\d\d\d[-\s]?\d\d\d[\dX])$"
 )
-
-
-def len_at_least(min_len: int):
-    def validator(s: Sequence):
-        assert len(s) > min_len, f"must have length >={min_len}"
-        return s
-
-    return validator
-
-
-LongStr = Annotated[str, AfterValidator(len_at_least(25))]
-
-
-class OmitIfFalsey:
-    pass
-
-
-def omit_falsey(obj):
-    """Use inside a `@model_serializer`.
-
-    ## Examples
-    ```python
-    @model_serializer
-    def _serializer(self):
-        return omit_falsey(self)
-    ```
-    """
-    maybe_omit = {
-        k
-        for k, v in type(obj).model_fields.items()
-        if any(isinstance(m, OmitIfFalsey) for m in v.metadata)
-    }
-    return {k: v for k, v in obj if k not in maybe_omit or not v}
-
-
-def is_int(s: str) -> int:
-    return int(s)
-
-
-IntAsStr = Annotated[int, AfterValidator(is_int)]
 
 
 def iso_7064_11_2(s: str) -> Iterable[str]:
@@ -92,3 +52,11 @@ def orcid_id(s: str) -> str:
 
 
 OrcidId = Annotated[str, AfterValidator(orcid_id)]
+
+
+def maybe():
+    return Field(default_factory=lambda: None, exclude_if=lambda x: x is None)
+
+
+def maybe_list():
+    return Field(default_factory=list, exclude_if=lambda x: len(x) == 0)

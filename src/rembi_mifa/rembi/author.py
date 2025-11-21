@@ -1,5 +1,5 @@
 from __future__ import annotations
-from pydantic import BaseModel, EmailStr, AnyUrl
+from pydantic import EmailStr, AnyUrl, Field, BaseModel
 
 from ..util import OrcidId
 
@@ -14,12 +14,16 @@ class Author(BaseModel):
     email: EmailStr
     """Author email address."""
 
-    orcid: OrcidId | None = None
+    orcid: OrcidId | None = Field(
+        default_factory=lambda: None, exclude_if=lambda x: x is None
+    )
     """Author ORCID ID."""
 
     affiliation: OrganisationUrl | OrganisationInfo
 
-    role: str | None = None
+    role: str | None = Field(
+        default_factory=lambda: None, exclude_if=lambda x: x is None
+    )
     """Author role in the study."""
 
 

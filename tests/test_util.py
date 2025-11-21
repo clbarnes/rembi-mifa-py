@@ -1,7 +1,7 @@
 import os
 import pytest
 
-from pydantic import BaseModel, ValidationError
+from pydantic import ValidationError, BaseModel
 from pathlib import Path
 import runpy
 

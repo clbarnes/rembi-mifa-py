@@ -1,6 +1,6 @@
 from typing import Literal
-from pydantic import BaseModel
 
+from pydantic import BaseModel
 from .version import REMBI_VERSION
 
 
@@ -17,4 +17,4 @@ class StudyComponent(BaseModel):
     description: str
     """An explanation of your study component."""
 
-    rembi_version: Literal["1.5"] = REMBI_VERSION
+    rembi_version: Literal["1.5"] = REMBI_VERSION  # type:ignore

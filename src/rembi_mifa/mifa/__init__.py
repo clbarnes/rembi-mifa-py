@@ -8,11 +8,8 @@ More details can be found on the website:
 
 from __future__ import annotations
 from enum import StrEnum, auto
-from typing import Annotated
 import datetime as dt
-from pydantic import BaseModel, EmailStr, Field, model_serializer
-
-from ..util import IntAsStr, OmitIfFalsey
+from pydantic import EmailStr, Field, model_serializer, BaseModel
 
 __all__ = [
     "MifaContainer",
@@ -28,17 +25,27 @@ __all__ = [
 
 
 class MifaContainer(BaseModel):
-    publications: Publications | None = None
-    authors: Annotated[list[Author], OmitIfFalsey] = Field(default_factory=list)
-    grants: Annotated[list[GrantReference], OmitIfFalsey] = Field(default_factory=list)
-    link_url: Annotated[list[str], OmitIfFalsey] = Field(default_factory=list)
-    link_description: Annotated[list[str], OmitIfFalsey] = Field(default_factory=list)
+    publications: Publications | None = Field(
+        default_factory=lambda x: None, exclude_if=lambda x: x is None
+    )
+    authors: list[Author] = Field(default_factory=list, exclude_if=lambda x: not x)
+    grants: list[GrantReference] = Field(
+        default_factory=list, exclude_if=lambda x: not x
+    )
+    link_url: list[str] = Field(default_factory=list, exclude_if=lambda x: not x)
+    link_description: list[str] = Field(
+        default_factory=list, exclude_if=lambda x: not x
+    )
     title: str
     description: str
-    keywords: Annotated[list[str], OmitIfFalsey] = Field(default_factory=list)
+    keywords: list[str] = Field(default_factory=list, exclude_if=lambda x: not x)
     license: LicenseType
-    ai_models_trained: Annotated[list[str], OmitIfFalsey] = Field(default_factory=list)
-    acknowledgements: str | None = None
+    ai_models_trained: list[str] = Field(
+        default_factory=list, exclude_if=lambda x: not x
+    )
+    acknowledgements: str | None = Field(
+        default_factory=lambda: None, exclude_if=lambda x: x is None
+    )
     funding_statement: str
     annotations: list[Annotations]
 
@@ -49,8 +56,14 @@ class Publications(BaseModel):
     publication_title: str
     publication_authors: str
     publication_doi: str
-    publication_year: Annotated[int, IntAsStr] | None = None
-    pubmed_id: str | None = None
+    publication_year: int | None = Field(
+        default_factory=lambda: None,
+        exclude_if=lambda x: x is None,
+        coerce_numbers_to_str=True,
+    )
+    pubmed_id: str | None = Field(
+        default_factory=lambda: None, exclude_if=lambda x: x is None
+    )
 
     @model_serializer
     def _serialize(self):
@@ -63,22 +76,30 @@ class Publications(BaseModel):
 class Author(BaseModel):
     """Information about the authors."""
 
-    organisation: Annotated[list[OrganisationInfo], OmitIfFalsey] = Field(
-        default_factory=list
+    organisation: list[OrganisationInfo] = Field(
+        default_factory=list, exclude_if=lambda x: len(x) == 0
     )
     author_first_name: str
     author_last_name: str
-    email: EmailStr | None = None
-    orcid_id: str | None = None
-    role: Annotated[list[str], OmitIfFalsey] = Field(default_factory=list)
+    email: EmailStr | None = Field(
+        default_factory=lambda: None, exclude_if=lambda x: x is None
+    )
+    orcid_id: str | None = Field(
+        default_factory=lambda: None, exclude_if=lambda x: x is None
+    )
+    role: list[str] = Field(default_factory=list, exclude_if=lambda x: not x)
 
 
 class OrganisationInfo(BaseModel):
     """Information about the organisation the author is affiliated with."""
 
     organisation_name: str
-    address: str | None = None
-    ror_id: str | None = None
+    address: str | None = Field(
+        default_factory=lambda: None, exclude_if=lambda x: x is None
+    )
+    ror_id: str | None = Field(
+        default_factory=lambda: None, exclude_if=lambda x: x is None
+    )
 
 
 class GrantReference(BaseModel):
@@ -97,29 +118,41 @@ class LicenseType(StrEnum):
 class Annotations(BaseModel):
     """A set of annotations for an AI-ready dataset."""
 
-    authors: Annotated[list[Author], OmitIfFalsey] = Field(default_factory=list)
-    file_metadata: Annotated[list[FileLevelMetadata], OmitIfFalsey] = Field(
-        default_factory=list
+    authors: list[Author] = Field(default_factory=list, exclude_if=lambda x: not x)
+    file_metadata: list[FileLevelMetadata] = Field(
+        default_factory=list, exclude_if=lambda x: not x
     )
     annotation_overview: str
-    annotation_type: Annotated[list[AnnotationType], OmitIfFalsey] = Field(
-        default_factory=list
+    annotation_type: list[AnnotationType] = Field(
+        default_factory=list, exclude_if=lambda x: not x
     )
     annotation_method: str
-    annotation_criteria: str | None = None
-    annotation_coverage: str | None = None
-    annotation_confidence_level: str | None = None
+    annotation_criteria: str | None = Field(
+        default_factory=lambda: None, exclude_if=lambda x: x is None
+    )
+    annotation_coverage: str | None = Field(
+        default_factory=lambda: None, exclude_if=lambda x: x is None
+    )
+    annotation_confidence_level: str | None = Field(
+        default_factory=lambda: None, exclude_if=lambda x: x is None
+    )
 
 
 class FileLevelMetadata(BaseModel):
     annotation_id: str
-    annotation_type: Annotated[list[AnnotationType], OmitIfFalsey] = Field(
-        default_factory=list
+    annotation_type: list[AnnotationType] = Field(
+        default_factory=list, exclude_if=lambda x: not x
     )
     source_image_id: str
-    transformations: str | None = None
-    spatial_information: str | None = None
-    annotation_creation_time: dt.datetime | None = None
+    transformations: str | None = Field(
+        default_factory=lambda: None, exclude_if=lambda x: x is None
+    )
+    spatial_information: str | None = Field(
+        default_factory=lambda: None, exclude_if=lambda x: x is None
+    )
+    annotation_creation_time: dt.datetime | None = Field(
+        None, exclude_if=lambda x: x is None
+    )
 
 
 class AnnotationType(StrEnum):

@@ -1,5 +1,6 @@
 from __future__ import annotations
-from pydantic import BaseModel
+
+from pydantic import Field, BaseModel
 
 
 class Biosample(BaseModel):
@@ -16,14 +17,18 @@ class Biosample(BaseModel):
     AC16s human cardiomyocyte cells
     """
 
-    description: str | None = None
+    description: str | None = Field(
+        default_factory=lambda: None, exclude_if=lambda x: x is None
+    )
     """High level description of the sample
 
     ## Examples
     - Bronchial epithelial cell culture
     """
 
-    intrinsic_variables: str | None = None
+    intrinsic_variables: str | None = Field(
+        default_factory=lambda: None, exclude_if=lambda x: x is None
+    )
     """Intrinsic (e.g. generic) alteration.
 
     ## Examples
@@ -32,7 +37,9 @@ class Biosample(BaseModel):
     - Homozygous GFP integration into mitotic genes
     """
 
-    extrinsic_variables: str | None = None
+    extrinsic_variables: str | None = Field(
+        default_factory=lambda: None, exclude_if=lambda x: x is None
+    )
     """External treatment (e.g. reagent).
 
     ## Examples
@@ -41,7 +48,9 @@ class Biosample(BaseModel):
     - cridanimod
     """
 
-    experimental_variables: str | None = None
+    experimental_variables: str | None = Field(
+        default_factory=lambda: None, exclude_if=lambda x: x is None
+    )
     """What is intentionally varied between multiple images.
 
     ## Examples
@@ -61,7 +70,9 @@ class Organism(BaseModel):
     - Danio rerio
     """
 
-    common_name: str | None = None
+    common_name: str | None = Field(
+        default_factory=lambda: None, exclude_if=lambda x: x is None
+    )
     """Common name.
 
     ## Examples
