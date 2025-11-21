@@ -1,6 +1,6 @@
 [project]
 name = "rembi-mifa"
-version = "0.1.0"
+version = "0.1.1"
 description = "Models for REMBI and MIFA metadata specifications for FAIR bioimaging data."
 readme = "README.md"
 license = "MIT"
