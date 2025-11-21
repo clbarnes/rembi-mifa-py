@@ -11,6 +11,23 @@ dependencies = [
     "email-validator>=2.3.0",
     "pydantic>=2.12.4",
 ]
+keywords = ["rembi", "mifa", "fair", "bioimage", "metadata", "microscopy"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Framework :: Pydantic",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: English",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+]
+
+[project.urls]
+Repository = "https://github.com/clbarnes/rembi-mifa-py"
 
 [build-system]
 requires = ["uv_build>=0.9.8,<0.10.0"]
