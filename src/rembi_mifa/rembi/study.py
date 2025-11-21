@@ -61,9 +61,10 @@ class Study(BaseModel):
         return omit_falsey(self)
 
 
-# TODO: anything here?
-class License(BaseModel):
-    """The license under which the data are available."""
+# class License(BaseModel):
+#     """The license under which the data are available."""
+
+License = str
 
 
 class Funding(BaseModel):

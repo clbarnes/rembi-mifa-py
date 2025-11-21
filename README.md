@@ -4,23 +4,17 @@ Pydantic-based python models for [REMBI](https://www.ebi.ac.uk/bioimage-archive/
 
 ## Usage
 
-### REMBI
-
-```python
-from rembi_mifa import rembi
-
-rembi.RembiStudy
-```
-
-### MIFA
+See [`examples/`](./examples/) directory.
 
 ## Notes
 
 The original specs lack some documentation and have a few other quirks.
 The implementation here may differ from the intended structure in these cases.
 
-- The REMBI specification refers to but does not define the `AnnotationType` type;
-  here we use the MIFA `AnnotationType` enum.
+- The REMBI specification refers to but does not define the [`AnnotationType`](https://www.ebi.ac.uk/bioimage-archive/rembi-model-reference/#annotationtype) type;
+  here we use the MIFA [`AnnotationType`](https://www.ebi.ac.uk/bioimage-archive/mifa-model-reference/#annotationtype) enum.
+- the REMBI specification refers to the [`License`](https://www.ebi.ac.uk/bioimage-archive/rembi-model-reference/#license) type but it is empty;
+  there is no MIFA type of the same name (although `LicenseType` is close). We just accept a string, and recommend using an [SPDX identifier](https://spdx.org/licenses/).
 
 This implementation is opinionated on certain serialisation/deserialisation features:
 
